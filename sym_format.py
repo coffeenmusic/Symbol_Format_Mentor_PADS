@@ -240,5 +240,9 @@ class SymbolFormat:
 
     # Add Object Type
     def _add_obj(self, obj):
-        attr_name = ''.join([v for v in obj._identifier if v.isalpha()]) # Remove non-alphabetic characters
+        attr_name = obj._identifier
+        # If first character is not alphabetic then remove
+        if not attr_name[0].isalpha(): 
+            attr_name = obj._identifier[1:]           
+        
         setattr(self, attr_name, obj)
