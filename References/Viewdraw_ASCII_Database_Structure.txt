@@ -1,0 +1,258 @@
+*** The format of Viewdraw's schematic symbols and schematic drawings : ***
+
+    Digged out by Juha Manninen, juha.manninen@datex-ohmeda.com.
+    I got this info mostly by changing things in Viewdraw and seeing what happens in the saved file.
+    The list is incomplete but should be mostly correct. There are programs using this format to parse files.
+
+    Additions by Martin Vana <20021230:1205>
+    Updated <20021231>
+    Updated <20040712> by HJS: Arc section completed
+
+    The files are in ASCII text format.
+    In the beginning of each line there is a letter indicating the object type.
+
+
+These items are common to both symbol and schematic drawing formats :
+
+  V : version  1 fields.
+      Eg. V 50
+    Fields : V  InternalVersionNumber
+    note: ViewDraw 8.0.0 Aug 13 2001 denotes newly created files as V 51
+
+  K : license  2 fields.
+      Eg. K 199811641700 RESU
+    Fields : K  ?  OriginalName
+
+  Y : Type.  1 field.
+      Eg. Y 1
+    Fields : Y  SymbolType
+
+  D : Size.  4 fields.
+      Eg. D 0 0 60 40
+    Fields : D  Xmin  Ymin  Xmax  Ymax
+
+  Z : Sheet size.  1 field.
+      Eg. Z 10
+    Fields : Z  SheetSize
+
+  i : MaxObj  1 field.
+      Eg. i 6
+    Fields : MaxObj ... max used object # (N #, I #, C #, X #, ...)
+    Always incremented, deleted nets and other objects # are abandoned ...
+
+  L : Label for the previous item (Pin, component etc.). 9 fields.
+      Eg. L -3 25 10 0 2 0 0 0 N1
+    Fields : L  Xpos  Ypos  FontSize  RotMir  Orientation  Locality  Visible  Inverted  Name
+
+  U : Global (file space) attribute. 7 fields.
+      Eg. U 0 -10 14 0 3 0 ITEM#
+    Fields : U  XPos  YPos  FontSize  RotMir  Orientation  Visibility  Name(=Value)
+
+  A : attribute. 7 fields.
+      directly follows the item (component or pin or net etc.) it belongs to.
+      Eg. A -3 10 10 0 7 0 PINTYPE=BI
+    Fields : A  Xpos  Ypos  FontSize  RotMir  Orientation  Visibility  Name(=Value)
+
+  Q : Defines font, line type and color definition. Affects the previous object.
+      Eg. Q 2 4 2
+    Fields : Q  Color  FillStyle  LineStyle
+
+  T : Text. 6 fields.
+      Eg. T 0 0 14 0 3 testtext
+    Fields :  T  Xpos  Ypos  FontSize  RotMir  Orientation  Text
+
+  b : Box. 4 fields.
+      Eg. b 14 16 50 28
+    Fields :  b  X1  Y1  X2  Y2
+
+  l : Line. 5 fields. Seg# tells how many endpoints the line has.
+      Eg. l 2 6 4 18 32
+    Fields : l  Seg#  X1  Y1  X2  Y2...Xn  Yn
+
+  a : Arc. 6 fields.
+      Eg. a 18 32 0 19 22 20
+    Fields :  a  X(end) Y(end) X(on) Y(on) X(begin) Y(begin)
+    The first XY pair is the end of the arc
+    The last XY pair is the beginning of the arc
+    The middle XY pair is any other point on the arc
+    
+  c : Circle. 3 fields.
+      Eg. c 8 34 4
+    Fields :  c  Xpos  Ypos  r
+
+  E : End
+
+
+
+*** These are specific to symbols : ***
+
+  P : Pin. 8 fields.
+      Eg. P 1 0 20 12 20 0 2 0
+    Fields : P  InternalPinNumber  X1  Y1  X2  Y2  ??  Side  Invert
+      endpoint which is furthest from the device must be listed first
+
+
+
+*** These are specific to schematic drawings : ***
+
+  I: Component.  7 fields
+    Eg. I 3 LM7805 1 550 480 0 1 '    --   must have trailing '
+    Fields: I  component_id  [LibAlias:]symbol_name  sheet_number  xpos  ypos  orientation  scale
+
+  C: Pin.  4 fields                   --   Connected pin of the above component.
+    Eg.  C 131 4 2 0
+    Fields:  C  Net#  Joint#_of_that_Net  PinObject#  ?
+
+  X: Pin.  2 fields                   --   Not connected pin of the above component.
+    Eg.  X 23 0
+    Preceeds "A" attribute line related to the respective pin #
+    Fields: X  PinObject#  ?
+
+  N: Net  1 field
+    Eg   N 8
+    Fields:  N  NetNumber
+
+  J: Joint 3 fields                   --   Joint relating to above net
+    Eg   J 530 540 3
+    Fields:  J  Xpos  Ypos  JointType
+
+  S: Segment  2 fields                --   Segment of above net
+    Eg   S 2 1
+    Fields:  S  LowJointID  HighJointID
+
+  B: Bus  2 fields
+    Eg   B 2 4
+    Fields:  B  ?  ?
+
+---------------------------------------------------------------------------
+
+*** Structure (Semantics): ***
+
+Net Description:
+    N-record
+    J-record1
+    J-record2
+    [...J-record(n)]  ... min 2 J-records
+    [:
+    S-record          ... at least one ocurrence (one less than # of J-records)
+    [A-record(s)]       ... Optional Attribute(s) and
+    [L-record(s)]       ... optional Label(s) associated with above Segment
+    :]
+    - terminated by another structure (starting with N-record, I-record, L-record, T-record, ...)
+
+Component Instantiation:
+    I-record
+    [A-record(s)]
+    [:
+    C-record | X-record (at least one of these is "a must" depending on whether connected or disconnected from net)
+    [A-record]      optional attribute related to above connection point
+    :]
+    - terminated by another structure (starting with N-record, I-record, L-record, T-record, ...)
+
+
+---------------------------------------------------------------------------
+
+*** Values of some fields : ***
+
+ItemType :      0 = Composite
+                1 = Module
+                3 = Annotate
+                4 = Pin
+
+SheetSize :     0 = A
+                1 = B
+                2 = C
+                3 = D
+                4 = E
+                5 = A4
+                6 = A3
+                7 = A2
+                8 = A1
+                9 = A0
+                10 = Z (defined by user)
+
+Visibility :    0 = Invisible
+                1 = Visible
+                2 = Name
+                3 = Value
+
+RotMir :        0 = Not rotated
+                1 = Rotated 90 degrees
+                2 = Rotated 180 degrees
+                3 = Rotated 270 degrees
+                4 = Mirror horizontal
+                6 = Mirror vertical
+
+Orientation :   1 = Upper left
+                2 = Middle left
+                3 = Lower left
+                4 = Upper center
+                5 = Middle center
+                6 = Lower center
+                7 = Upper right
+                8 = Middle right
+                9 = Lower right
+    Note: Imagine numeric keypad rotated by 90°
+        1 4 7
+        2 5 8
+        3 6 9
+
+Side :          0 = Top                    Symbol stud side
+                1 = Bottom
+                2 = Left
+                3 = Right
+
+Locality :      0 = Local
+                1 = Global
+
+JointType :     1 = Dangling Net (square shown).
+                2 = Wire connects to a component pin.
+                3 = A corner in the wire.
+                5 = Wire connects to another segment (dot shown)
+
+Invert :        0 = Not inverted
+                1 = Inverted
+
+Color :         0  = Black
+                1  = Blue
+                2  = Green
+                3  = Cyan
+                4  = Red
+                5  = Magenta
+                6  = Brown
+                7  = Lt. Gray
+                8  = Gray
+                9  = Lt. Blue
+                10 = Lt. Green
+                11 = Lt. Cyan
+                12 = Lt. Red
+                13 = Lt. Magenta
+                14 = Yellow
+                15 = White
+
+Fillstyle :     0  = Hollow
+                1  = Solid
+                2  = Grey92
+                4  = Grey50
+                6  = Grey08
+                7  = Grey04
+                8  = Diagdn2
+                11 = Diagdn1
+                13 = Diagup2
+                16 = Diagup1
+                19 = Horiz
+                21 = Vert
+                22 = Grid2
+                23 = Grid1
+                24 = X2
+                25 = X1
+
+Linestyle :     0  = Solid
+                1  = Dash
+                2  = Center
+                3  = Phantom
+                4  = Big dash
+                5  = Dot
+                6  = Dash-Dot
+                7  = Medimum dash
+
