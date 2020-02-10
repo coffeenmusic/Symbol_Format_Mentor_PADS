@@ -4,7 +4,6 @@ class FieldFormats:
     color = {'Black': 0, 'Blue': 1, 'Green': 2, 'Cyan': 3, 'Red': 4, 'Magenta': 5, 'Brown': 6, 'Light Gray': 7, 'Gray': 8, 'Light Blue': 9, 'Light Green': 10, 'Light Cyan': 11, 'Light Red': 12, 'Light Magenta': 13, 'Yellow': 14, 'White': 15}
 
     fill_style = {'Automatic': -1, 'Hollow': 0, 'Solid': 1, 'Grey92': 2, 'Grey50': 4, 'Grey08': 6, 'Grey04': 7, 'Diagdn2': 8, 'Diagdn1': 11, 'Diagup2': 13, 'Diagup1': 16, 'Horiz': 19, 'Vert': 21, 'Grid2': 22, 'Grid1': 23, 'X2': 24, 'X1': 25}
-    fill_style2 = {'Automatic': -1, 'Hollow': 0, 'Solid': 1, 'Diagdn1': 2, 'Diagup2': 3, 'Grey08': 4, 'Diagdn2': 5, 'Diagup1': 6, 'Horiz': 7, 'Vert': 8, 'Grid2': 9, 'Grid1': 10, 'X2': 11, 'X1': 12, 'Grey50': 13, 'Grey92': 14, 'Grey04': 15}
 
     font = {'Fixed': 0, 'Roman': 1, 'Roman Italic': 2, 'Roman Bold': 3, 'Roman Bold Italic': 4, 'Sans Serif': 5, 'Script': 6, 'Sans Serif Bold': 7, 'Script Bold': 8, 'Gothic': 9, 'Old English': 10, 'Kanji': 11, 'Plot': 12, 'Custom Style': 13  }
 
@@ -103,7 +102,7 @@ class ObjectFormats:
                       'line_width': 4} # 1-10, -1=Automatic
                       
     # |GRPHSTL_EXT01 - Graphics Style Extension 1
-    GRPHSTL_EXT01 = {'|GRPHSTL_EXT01': 0, 'color_value': 1, 'fill_color': 2, 'fill_style2': 3, 'line_style': 4, 'line_width': 5}
+    GRPHSTL_EXT01 = {'|GRPHSTL_EXT01': 0, 'color_value': 1, 'fill_color': 2, 'fill_style': 3, 'line_style': 4, 'line_width': 5}
     
     # l - Line/Polyline
     l = {'l': 0, 'count': 1, # number of x/y endpoint coordinates . Always >= 2.
