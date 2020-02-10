@@ -52,8 +52,8 @@ class ObjectFormats:
     
     # K - License
     #     Must be second line of the symbol
-    K = {'K': 0, 'magic-number': 1,    # Created from ViewLogic license and File Name
-         'original-name': 2}  # Name of the symbol when it was originally created
+    K = {'K': 0, 'magic_number': 1,    # Created from ViewLogic license and File Name
+         'original_name': 2}  # Name of the symbol when it was originally created
          
     """
     Header Objects -------------------------------------------------------------------------------------
