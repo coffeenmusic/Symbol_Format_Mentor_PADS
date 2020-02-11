@@ -158,6 +158,7 @@ class ObjectType:
         value: new attribute object - Symbol property's line location index
         """
         self._format = obj_dict.copy()
+        self._format_idx2val = {v:k for k, v in self._format.items()}
 
         obj_dict.pop(self._identifier)
 
@@ -175,6 +176,10 @@ class ObjectType:
     # Calling ObjectType will return the line format for that object
     def __call__(self):
         return self._format
+        
+    # Support indexing
+    def __getitem__(self, key):
+        return self._format_idx2val[key]
         
     def __len__(self):
         return len(self._format) - 1
@@ -203,6 +208,7 @@ class Field:
         
         if field_dict != None:
             self._format = field_dict
+            self._format_idx2val = {v:k for k, v in self._format.items()}
             
             # Create properties for each key in the dictionary
             for k, v in field_dict.items():
@@ -214,6 +220,13 @@ class Field:
             return self._format
         else:
             return None
+            
+    # Support indexing
+    def __getitem__(self, key):
+        if hasattr(self, '_format_idx2val'):
+            return self._format_idx2val[key]
+        else:
+            return None        
             
     def __int__(self):
         return self._idx
